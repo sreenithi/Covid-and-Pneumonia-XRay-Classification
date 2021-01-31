@@ -1,11 +1,12 @@
 from azureml.data.dataset_factory import FileDatasetFactory
 from azureml.core.run import Run
 # import tensorflow as tf
-from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten 
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
 import argparse
 import os
+import numpy as np
 
 # def register_data():
 #     data = FileDatasetFactory.upload_directory("./Covid19-dataset/",target=ws.get_default_datastore())    
@@ -77,12 +78,12 @@ def getCNNModel(args):
 def main():
 
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--filter1', type='int', default=96, help="Number of filters for the first 2 convolutional layers")
-    arg_parser.add_argument('--filter2', type='int', default=64, help="Number of filters for the 3rd convolutional layer")
-    arg_parser.add_argument('--filter3', type='int', default=32, help="Number of filters for the 4th convolutional layer")
-    arg_parser.add_argument('--dense_units', type='int', default=128, help="Number of units in the dense layer")
-    arg_parser.add_argument('--dropout_rate', type='float', default=0.2, help="dropout rate for the 2 dropout layers")
-    arg_parser.add_argument('--epochs', type='int', default=50, help="Number of epochs to train")
+    arg_parser.add_argument('--filter1', type=int, default=96, help="Number of filters for the first 2 convolutional layers")
+    arg_parser.add_argument('--filter2', type=int, default=64, help="Number of filters for the 3rd convolutional layer")
+    arg_parser.add_argument('--filter3', type=int, default=32, help="Number of filters for the 4th convolutional layer")
+    arg_parser.add_argument('--dense_units', type=int, default=128, help="Number of units in the dense layer")
+    arg_parser.add_argument('--dropout_rate', type=float, default=0.2, help="dropout rate for the 2 dropout layers")
+    arg_parser.add_argument('--epochs', type=int, default=50, help="Number of epochs to train")
     
     args = arg_parser.parse_args()
 
@@ -100,8 +101,8 @@ def main():
     model.summary()
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    history = model.fit(x=train_gen, epochs=args.epochs, workers=6, use_multiprocessing=True)
-    results = model.evaluate(x=test_gen, workers=6, use_multiprocessing=True, return_dict=True)
+    history = model.fit(x=train_gen, epochs=args.epochs)#, workers=6, use_multiprocessing=True)
+    results = model.evaluate(x=test_gen, return_dict=True)# workers=6, use_multiprocessing=True)
 
     run.log("accuracy", np.float(results['accuracy']))   
 
@@ -114,3 +115,6 @@ run = Run.get_context()
 data_height = 256
 data_width = 256
 # register_data()
+
+if __name__ == '__main__':
+    main()
