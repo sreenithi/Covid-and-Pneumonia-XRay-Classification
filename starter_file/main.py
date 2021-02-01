@@ -1,9 +1,14 @@
 from azureml.data.dataset_factory import FileDatasetFactory
 from azureml.core.run import Run
-# import tensorflow as tf
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
+
+# from keras.preprocessing.image import ImageDataGenerator
+# from keras.models import Sequential
+# from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
+
 import argparse
 import os
 import numpy as np
@@ -71,7 +76,8 @@ def getCNNModel(args):
     model.add(Dropout(args.dropout_rate))
 
     model.add(Flatten())
-    model.add(Dense(args.dense_units, activation='softmax'))
+    model.add(Dense(args.dense_units, activation='relu'))
+    model.add(Dense(3, activation='softmax'))
 
     return model
 
@@ -94,6 +100,13 @@ def main():
     run.log("Dropout Rate:", np.float(args.dropout_rate))
     run.log("Number of Epochs:", np.int(args.epochs))
 
+    # print("Number of filters in Conv1 and Conv2:", np.int(args.filter1))
+    # print("Number of filters in Conv3:", np.int(args.filter2))
+    # print("Number of filters in Conv4:", np.int(args.filter3))
+    # print("Number of units in the Dense layer:", np.int(args.dense_units))
+    # print("Dropout Rate:", np.float(args.dropout_rate))
+    # print("Number of Epochs:", np.int(args.epochs))
+
     train_gen, test_gen = get_data()
     # plot_data(gen)
 
@@ -104,7 +117,8 @@ def main():
     history = model.fit(x=train_gen, epochs=args.epochs)#, workers=6, use_multiprocessing=True)
     results = model.evaluate(x=test_gen, return_dict=True)# workers=6, use_multiprocessing=True)
 
-    run.log("accuracy", np.float(results['accuracy']))   
+    run.log("accuracy", np.float(results['accuracy']))
+    # print("accuracy", np.float(results['accuracy']))   
 
     os.makedirs('./outputs', exist_ok=True)
     model.save('./outputs/model') 
