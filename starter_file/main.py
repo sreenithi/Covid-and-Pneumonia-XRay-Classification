@@ -26,7 +26,7 @@ import numpy as np
 
 class LogCallback(Callback):
     def on_epoch_end(self, epoch, logs=None):
-        run.log("accuracy", np.float(logs['accuracy']))
+        run.log("accuracy", np.float(logs['acc']))
         # print("\nLogging Accuracy", np.float(logs['accuracy']))        
 
 def get_data():
@@ -122,9 +122,9 @@ def main():
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     history = model.fit(x=train_gen, epochs=args.epochs, verbose=2, callbacks=[LogCallback()])#, workers=6, use_multiprocessing=True)
-    results = model.evaluate(x=test_gen, return_dict=True, verbose=2)# workers=6, use_multiprocessing=True)
+    results = model.evaluate(x=test_gen, verbose=2)# workers=6, use_multiprocessing=True)
 
-    run.log("accuracy", np.float(results['accuracy']))
+    run.log("accuracy", np.float(results[1]))
     # print("accuracy", np.float(results['accuracy']))   
 
     os.makedirs('./outputs', exist_ok=True)
