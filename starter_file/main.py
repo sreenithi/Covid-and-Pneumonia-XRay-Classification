@@ -4,10 +4,12 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
+from tensorflow.keras.callbacks import Callback
 
 # from keras.preprocessing.image import ImageDataGenerator
 # from keras.models import Sequential
 # from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
+# from keras.callbacks import Callback
 
 import argparse
 import os
@@ -21,6 +23,11 @@ import numpy as np
 #     #data.download(target_path="./downloaded_data", overwrite=False)
 
 #     return data       
+
+class LogCallback(Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        run.log("accuracy", np.float(logs['accuracy']))
+        # print("\nLogging Accuracy", np.float(logs['accuracy']))        
 
 def get_data():
 
@@ -114,8 +121,8 @@ def main():
     model.summary()
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
-    history = model.fit(x=train_gen, epochs=args.epochs)#, workers=6, use_multiprocessing=True)
-    results = model.evaluate(x=test_gen, return_dict=True)# workers=6, use_multiprocessing=True)
+    history = model.fit(x=train_gen, epochs=args.epochs, verbose=2, callbacks=[LogCallback()])#, workers=6, use_multiprocessing=True)
+    results = model.evaluate(x=test_gen, return_dict=True, verbose=2)# workers=6, use_multiprocessing=True)
 
     run.log("accuracy", np.float(results['accuracy']))
     # print("accuracy", np.float(results['accuracy']))   
