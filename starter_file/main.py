@@ -1,47 +1,77 @@
-from azureml.data.dataset_factory import FileDatasetFactory
+from azureml.data.dataset_factory import FileDatasetFactory, TabularDatasetFactory
 from azureml.core.run import Run
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
 from tensorflow.keras.callbacks import Callback
+from tensorflow.keras.preprocessing import image_dataset_from_directory
 
 # from keras.preprocessing.image import ImageDataGenerator
 # from keras.models import Sequential
 # from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
 # from keras.callbacks import Callback
+# from keras.preprocessing import image_dataset_from_directory
 
 import argparse
 import os
 import numpy as np
-
-# def register_data():
-#     data = FileDatasetFactory.upload_directory("./Covid19-dataset/",target=ws.get_default_datastore())    
-#     print("type:",type(data))
-    
-#     data.register(ws, "covid-pneumonia-dataset")
-#     #data.download(target_path="./downloaded_data", overwrite=False)
-
-#     return data       
+import pandas as pd
+       
 
 class LogCallback(Callback):
     def on_epoch_end(self, epoch, logs=None):
         run.log("accuracy", np.float(logs['acc']))
         # print("\nLogging Accuracy", np.float(logs['accuracy']))        
 
+def convert_to_table(image_data_path):
+    table = image_dataset_from_directory(image_data_path,
+                                         batch_size=16, 
+                                         image_size=(data_width, data_height),
+                                         label_mode='int', 
+                                         color_mode='grayscale')
+    np_it = table.as_numpy_iterator()
+    all_images_np = np.empty((0,(data_height * data_width + 1)))
+
+    for element in np_it:
+        print("image shape:", element[0].shape)
+        flattened_image = np.reshape(element[0],(element[0].shape[0],-1))
+        reshaped_labels = np.expand_dims(element[1], 1)
+        image_label_np = np.append(flattened_image, reshaped_labels, axis=1)
+        all_images_np = np.append(all_images_np, image_label_np, axis=0)
+
+    print("flattened shape:",all_images_np.shape)
+    column_names = list(range(all_images_np.shape[1]-1))
+    column_names.append('class')
+    df = pd.DataFrame(all_images_np, columns=column_names)
+
+    return df
+
+def register_image_data_as_file(ws, local_data_path, dataset_name):
+    image_file_data = FileDatasetFactory.upload_directory(local_data_path, target=ws.get_default_datastore())    
+    image_file_data.register(ws, dataset_name)
+    #image_file_data.download(target_path="./downloaded_data", overwrite=False)
+
+    return data
+
+def register_image_data_as_table(ws, image_data_path, dataset_name):
+    image_df = convert_to_table(image_data_path)
+    data_factory = TabularDatasetFactory.register_pandas_dataframe(image_df, target=ws.get_default_datastore(), name=dataset_name)
+    return data_factory
+
 def get_data():
 
     train_datagen = ImageDataGenerator(rescale=1./255)
     train_gen = train_datagen.flow_from_directory(
                 './Covid19-dataset/train',
-                target_size=(data_height, data_width),
+                target_size=(data_width, data_height),
                 batch_size=32,
                 color_mode='grayscale')
     
     test_datagen = ImageDataGenerator(rescale=1./255)
     test_gen = test_datagen.flow_from_directory(
                 './Covid19-dataset/test',
-                target_size=(data_height, data_width),
+                target_size=(data_width, data_height),
                 batch_size=4,
                 color_mode='grayscale')
 
@@ -133,9 +163,10 @@ def main():
 run = Run.get_context()
 
 # height and width of the image to resize to
-data_height = 256
-data_width = 256
+data_height = 150
+data_width = int(150*1.3)
 # register_data()
 
 if __name__ == '__main__':
     main()
+    # convert_to_table('./Covid19-dataset/train')
