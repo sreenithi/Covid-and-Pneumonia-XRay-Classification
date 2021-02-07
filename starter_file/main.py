@@ -5,7 +5,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
 from tensorflow.keras.callbacks import Callback
-from tensorflow.keras.preprocessing import image_dataset_from_directory
+# from tensorflow.keras.preprocessing import image_dataset_from_directory
 
 # from keras.preprocessing.image import ImageDataGenerator
 # from keras.models import Sequential
@@ -17,6 +17,7 @@ import argparse
 import os
 import numpy as np
 import pandas as pd
+# import matplotlib.pyplot as plt
        
 
 class LogCallback(Callback):
@@ -98,7 +99,7 @@ def getCNNModel(args):
 
     model = Sequential()
 
-    model.add(Conv2D(args.filter1, (3,3), input_shape=(data_height, data_width, 1), activation='relu', name='conv1'))
+    model.add(Conv2D(args.filter1, (3,3), input_shape=(data_width, data_height, 1), activation='relu', name='conv1'))
     model.add(MaxPooling2D((2,2)))
 
     model.add(Conv2D(args.filter1, (3,3), activation='relu', name='conv2'))
@@ -107,10 +108,10 @@ def getCNNModel(args):
     model.add(Dropout(args.dropout_rate))
 
     model.add(Conv2D(args.filter2, (3,3), activation='relu', name='conv3'))
-    model.add(MaxPooling2D((3,3)))
+    model.add(MaxPooling2D((2,2)))
 
     model.add(Conv2D(args.filter3, (3,3), activation='relu', name='conv4'))
-    model.add(MaxPooling2D((3,3)))
+    model.add(MaxPooling2D((2,2)))
 
     model.add(Dropout(args.dropout_rate))
 
@@ -156,7 +157,7 @@ def main():
     history = model.fit(x=train_gen, epochs=args.epochs, verbose=2, callbacks=[LogCallback()])#, workers=6, use_multiprocessing=True)
     results = model.evaluate(x=test_gen, verbose=2)# workers=6, use_multiprocessing=True)
 
-    run.log("accuracy", np.float(results[1]))
+    # run.log("accuracy", np.float(results[1]))
     # print("accuracy", np.float(results['accuracy']))   
 
     os.makedirs('./outputs', exist_ok=True)
