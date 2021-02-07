@@ -34,16 +34,18 @@ def convert_to_table(image_data_path):
     all_images_np = np.empty((0,(data_height * data_width + 1)))
 
     for element in np_it:
-        print("image shape:", element[0].shape)
+        # print("image shape:", element[0].shape)
         flattened_image = np.reshape(element[0],(element[0].shape[0],-1))
+        flattened_image /= 255.0
         reshaped_labels = np.expand_dims(element[1], 1)
         image_label_np = np.append(flattened_image, reshaped_labels, axis=1)
         all_images_np = np.append(all_images_np, image_label_np, axis=0)
 
-    print("flattened shape:",all_images_np.shape)
+    # print("flattened shape:",all_images_np.shape)
     column_names = list(range(all_images_np.shape[1]-1))
     column_names.append('class')
     df = pd.DataFrame(all_images_np, columns=column_names)
+    df['class'] = df['class'].astype(int)
 
     return df
 
@@ -163,8 +165,8 @@ def main():
 run = Run.get_context()
 
 # height and width of the image to resize to
-data_height = 150
-data_width = int(150*1.3)
+data_height = 100
+data_width = int(data_height*1.3)
 # register_data()
 
 if __name__ == '__main__':
