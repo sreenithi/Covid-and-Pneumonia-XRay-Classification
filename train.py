@@ -1,15 +1,15 @@
-# from azureml.data.dataset_factory import FileDatasetFactory
-# from azureml.core.run import Run
-# import tensorflow as tf
-# from tensorflow.keras.preprocessing.image import ImageDataGenerator
-# from tensorflow.keras.models import Sequential
-# from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
-# from tensorflow.keras.callbacks import Callback
+from azureml.data.dataset_factory import FileDatasetFactory
+from azureml.core.run import Run
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
+from tensorflow.keras.callbacks import Callback
 
-from keras.preprocessing.image import ImageDataGenerator
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
-from keras.callbacks import Callback
+# from keras.preprocessing.image import ImageDataGenerator
+# from keras.models import Sequential
+# from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout 
+# from keras.callbacks import Callback
 
 import argparse
 import os
@@ -19,8 +19,8 @@ import pandas as pd
 
 class LogCallback(Callback):
     def on_epoch_end(self, epoch, logs=None):
-        # run.log("accuracy", np.float(logs['acc']))
-        print("\nLogging Accuracy", np.float(logs['accuracy']))        
+        run.log("accuracy", np.float(logs['acc']))
+        # print("\nLogging Accuracy", np.float(logs['accuracy']))        
 
 
 def register_image_data_as_file(ws, local_data_path, dataset_name):
@@ -89,19 +89,19 @@ def main():
     
     args = arg_parser.parse_args()
 
-    # run.log("Number of filters in Conv1 and Conv2:", np.int(args.filter1))
-    # run.log("Number of filters in Conv3:", np.int(args.filter2))
-    # run.log("Number of filters in Conv4:", np.int(args.filter3))
-    # run.log("Number of units in the Dense layer:", np.int(args.dense_units))
-    # run.log("Dropout Rate:", np.float(args.dropout_rate))
-    # run.log("Number of Epochs:", np.int(args.epochs))
+    run.log("Number of filters in Conv1 and Conv2:", np.int(args.filter1))
+    run.log("Number of filters in Conv3:", np.int(args.filter2))
+    run.log("Number of filters in Conv4:", np.int(args.filter3))
+    run.log("Number of units in the Dense layer:", np.int(args.dense_units))
+    run.log("Dropout Rate:", np.float(args.dropout_rate))
+    run.log("Number of Epochs:", np.int(args.epochs))
 
-    print("Number of filters in Conv1 and Conv2:", np.int(args.filter1))
-    print("Number of filters in Conv3:", np.int(args.filter2))
-    print("Number of filters in Conv4:", np.int(args.filter3))
-    print("Number of units in the Dense layer:", np.int(args.dense_units))
-    print("Dropout Rate:", np.float(args.dropout_rate))
-    print("Number of Epochs:", np.int(args.epochs))
+    # print("Number of filters in Conv1 and Conv2:", np.int(args.filter1))
+    # print("Number of filters in Conv3:", np.int(args.filter2))
+    # print("Number of filters in Conv4:", np.int(args.filter3))
+    # print("Number of units in the Dense layer:", np.int(args.dense_units))
+    # print("Dropout Rate:", np.float(args.dropout_rate))
+    # print("Number of Epochs:", np.int(args.epochs))
 
     train_gen, test_gen = get_data()
 
@@ -121,10 +121,10 @@ def main():
     # run.log("accuracy", np.float(results[1]))
     # print("accuracy", np.float(results['accuracy']))   
 
-    os.makedirs('./outputs', exist_ok=True)
-    model.save('./outputs/model') 
+    os.makedirs('./outputs/model', exist_ok=True)
+    tf.saved_model.save(model, './outputs/model/') 
 
-# run = Run.get_context()
+run = Run.get_context()
 
 # height and width of the image to resize to
 data_height = 256
@@ -132,3 +132,5 @@ data_width = 256
 
 if __name__ == '__main__':
     main()
+
+#python train.py --filter1 16 --filter2 16 --filter3 16 --dense_units 16 --epochs 5
