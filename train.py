@@ -122,7 +122,16 @@ def main():
     # print("accuracy", np.float(results['accuracy']))   
 
     os.makedirs('./outputs/model', exist_ok=True)
-    tf.saved_model.save(model, './outputs/model/') 
+    # tf.saved_model.save(model, './outputs/model/') 
+
+    json_model = model.to_json()
+
+    # saving model as JSON
+    with open('./outputs/model/model.json', 'w') as f:
+        f.write(json_model)
+
+    # saving model weights
+    model.save_weights('./outputs/model/model.h5')
 
 run = Run.get_context()
 
