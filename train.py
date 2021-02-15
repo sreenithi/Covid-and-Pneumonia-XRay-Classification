@@ -19,7 +19,7 @@ import pandas as pd
 
 class LogCallback(Callback):
     def on_epoch_end(self, epoch, logs=None):
-        run.log("accuracy", np.float(logs['acc']))
+        run.log("accuracy", np.float(logs['accuracy']))
         # print("\nLogging Accuracy", np.float(logs['accuracy']))        
 
 
