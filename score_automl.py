@@ -2,13 +2,17 @@ import json
 import numpy as np
 import os
 from sklearn.externals import joblib
-from azurml.core import Model
+from azureml.core import Model
 
 
 def init():
+    print("Started init")
     global model
-    model_path = Model.get_model_path('covid-pneumonia-automl')#'./outputs/model.pkl')
+    print("Getting Model Path")
+    model_path = Model.get_model_path('covid-pneumonia-automl', _workspace=ws)#'./outputs/model.pkl')
+    print("Loading model using joblib")
     model = joblib.load(model_path)
+    print("Finished init")
 
 def run(data):
     try:

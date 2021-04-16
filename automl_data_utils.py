@@ -30,9 +30,6 @@ def convert_to_table(image_data_path):
 
     count = 0
     for element in train_gen:
-        print("image shape:", element[0].shape)
-        print("label shape:", element[1].shape)
-        print()
         flattened_image = np.reshape(element[0],(element[0].shape[0],-1))
         flattened_image /= 255.0
         reshaped_labels = np.expand_dims(element[1], 1)
@@ -43,7 +40,6 @@ def convert_to_table(image_data_path):
         if count == num_batches:
             break
 
-    print("flattened shape:",all_images_np.shape)
     column_names = list(range(all_images_np.shape[1]-1))
     column_names.append('class')
     df = pd.DataFrame(all_images_np, columns=column_names)
