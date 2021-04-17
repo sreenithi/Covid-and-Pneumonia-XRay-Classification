@@ -4,8 +4,8 @@
 
 *TODO:* Write a short introduction to your project.
 The aim of this project is to classify Chest X-Ray images as whether they are positive for Covid-19, Viral Pneumonia or Normal (free of both diseases). Two types of classification was implemented using Microsoft Azure ML as follows:
- * The first is to train a Convolutional Neural Network (CNN)on the dataset and use the HyperDrive feature of AzureML to find the optimal number of filters for each Conv2D layer of the model.
- * The second option was to use the AutoML feature of AzureML with DNN enabled to automatically train multiple classifier models on the data
+ 1. The first is to train a Convolutional Neural Network (CNN) on the dataset and use the HyperDrive feature of AzureML to find the optimal number of filters for each Conv2D layer of the model.
+ 2. The second option was to use the AutoML feature of AzureML with DNN enabled to automatically train multiple classifier models on the data
 
 ## Project Set Up and Installation
 *OPTIONAL:* If your project has any special installation steps, this is where you should put it. To turn this project into a professional portfolio project, you are encouraged to explain how to set up this project in AzureML.
@@ -18,6 +18,8 @@ The data used for this project is the [Covid-19 Image Dataset](https://www.kaggl
 
 ### Task
 *TODO*: Explain the task you are going to be solving with this dataset and the features you will be using for it.
+The task we are trying to solve is to classify the Chest X-Rays in the dataset as whether they are affected by *Covid*, *Viral Pneumonia* or not affected by either (*Normal*).
+
 
 ### Access
 *TODO*: Explain how you are accessing the data in your workspace.

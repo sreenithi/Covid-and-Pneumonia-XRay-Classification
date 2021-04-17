@@ -1,6 +1,6 @@
 from azureml.data.dataset_factory import TabularDatasetFactory
 from azureml.core.run import Run
-import tensorflow as tf
+# import tensorflow as tf
 # from tensorflow.keras.preprocessing import image_dataset_from_directory
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -24,14 +24,14 @@ def convert_to_table(image_data_path):
                 class_mode="sparse",
                 color_mode='grayscale')
 
-    all_images_np = np.empty((0,(data_height * data_width + 1)))
+    all_images_np = np.empty((0,(data_height * data_width + 1)), dtype=float)
 
     num_batches = round(train_gen.samples / train_gen.batch_size)
 
     count = 0
     for element in train_gen:
         flattened_image = np.reshape(element[0],(element[0].shape[0],-1))
-        flattened_image /= 255.0
+        # flattened_image /= 255.0
         reshaped_labels = np.expand_dims(element[1], 1)
         image_label_np = np.append(flattened_image, reshaped_labels, axis=1)
         all_images_np = np.append(all_images_np, image_label_np, axis=0)
@@ -39,7 +39,7 @@ def convert_to_table(image_data_path):
         count += 1
         if count == num_batches:
             break
-
+    print("Type:",all_images_np.dtype)
     column_names = list(range(all_images_np.shape[1]-1))
     column_names.append('class')
     df = pd.DataFrame(all_images_np, columns=column_names)

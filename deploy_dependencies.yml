@@ -1,0 +1,18 @@
+channels:
+- conda-forge
+dependencies:
+- python=3.6.2
+- pip:
+  - h5py<=2.10.0
+  - azureml-defaults
+  - azureml-automl-core
+  - azureml-automl-runtime
+  - packaging
+  - joblib
+  - xgboost
+  #==0.90
+#   - tensorflow-gpu==2.0.0
+#   - keras<=2.3.1
+#   - matplotlib
+#   - Pillow
+#   - scipy

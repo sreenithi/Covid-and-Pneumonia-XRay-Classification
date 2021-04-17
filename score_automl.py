@@ -1,17 +1,22 @@
 import json
 import numpy as np
 import os
-from sklearn.externals import joblib
+# from sklearn.externals import joblib
+import joblib
 from azureml.core import Model
 
 
 def init():
+    print("\n****************************************")
     print("Started init")
     global model
     print("Getting Model Path")
-    model_path = Model.get_model_path('covid-pneumonia-automl', _workspace=ws)#'./outputs/model.pkl')
+    model_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'),'model.pkl')
+    print("Model Found?:", os.path.isfile(model_path))
     print("Loading model using joblib")
     model = joblib.load(model_path)
+    # print("Loading model using pickle")
+    # model = pickle.load(model_path)
     print("Finished init")
 
 def run(data):
