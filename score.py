@@ -7,7 +7,7 @@ import numpy as np
 def init():
     global model
 
-    model_root_path = Model.get_model_path('covid-pneumonia-cnn')
+    model_root_path = os.getenv('AZUREML_MODEL_DIR') #Model.get_model_path('covid-pneumonia-cnn')
     
     model_json_file = open(os.path.join(model_root_path, "model.json"), 'r')
     model_json = model_json_file.read()
