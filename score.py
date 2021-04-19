@@ -8,10 +8,8 @@ import numpy as np
 def init():
     global model
 
-    print("Files at os.getenv('AZUREML_MODEL_DIR')/model:")
-    print(os.listdir(os.path.join(os.getenv('AZUREML_MODEL_DIR'),'model')))
-    model_root_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'),'model') #Model.get_model_path('covid-pneumonia-cnn')
-    
+    # Loading Model Path and model files
+    model_root_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'),'model')
     model_json_file = open(os.path.join(model_root_path, "model.json"), 'r')
     model_json = model_json_file.read()
 
@@ -24,10 +22,9 @@ def init():
  
     
 def run(data):
-    # data = np.array(json.loads(raw_data)['data'])
+    # De-serializing JSON and converting the image back to a numpy array
     data = json.loads(data)['data']
     data = np.array(data)
-    # pil_img = image.array_to_img(data)
 
     y_hat = np.argmax(model.predict(data), axis=1)
     return y_hat.tolist()

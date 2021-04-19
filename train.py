@@ -26,7 +26,7 @@ class LogCallback(Callback):
 def register_image_data_as_file(ws, local_data_path, dataset_name):
     image_file_data = FileDatasetFactory.upload_directory(local_data_path, target=ws.get_default_datastore())    
     image_file_data.register(ws, dataset_name)
-    #image_file_data.download(target_path="./downloaded_data", overwrite=False)
+
 
 
 def get_data():
@@ -96,13 +96,6 @@ def main():
     run.log("Dropout Rate:", np.float(args.dropout_rate))
     run.log("Number of Epochs:", np.int(args.epochs))
 
-    # print("Number of filters in Conv1 and Conv2:", np.int(args.filter1))
-    # print("Number of filters in Conv3:", np.int(args.filter2))
-    # print("Number of filters in Conv4:", np.int(args.filter3))
-    # print("Number of units in the Dense layer:", np.int(args.dense_units))
-    # print("Dropout Rate:", np.float(args.dropout_rate))
-    # print("Number of Epochs:", np.int(args.epochs))
-
     train_gen, test_gen = get_data()
 
     model = getCNNModel(args)
@@ -116,10 +109,6 @@ def main():
                         # workers=6, 
                         # use_multiprocessing=True
                         )
-    # results = model.evaluate(x=test_gen, verbose=2)# workers=6, use_multiprocessing=True)
-
-    # run.log("accuracy", np.float(results[1]))
-    # print("accuracy", np.float(results['accuracy']))   
 
     os.makedirs('./outputs/model', exist_ok=True)
     # tf.saved_model.save(model, './outputs/model/') 
@@ -141,5 +130,3 @@ data_width = 256
 
 if __name__ == '__main__':
     main()
-
-#python train.py --filter1 16 --filter2 16 --filter3 16 --dense_units 16 --epochs 5
